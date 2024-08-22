@@ -9,18 +9,14 @@
 </head>
 <body>
     <div class="quiz-container">
-        <h1>Quiz Application</h1>
-        <div id="question-container">
-            <p id="question-text">Question will appear here</p>
-            <div id="answers-container">
-                <!-- Answer buttons will be inserted here dynamically -->
-            </div>
+        <h2 id="question">Question will appear here</h2>
+        <div id="options" class="options-container">
+            <!-- Options will be dynamically generated here -->
         </div>
-        <button id="submit-btn">Submit</button>
-        <div id="feedback"></div>
-        <div id="score-container">
-            <p id="score">Score: 0</p>
-        </div>
+        <button id="submit-btn">Submit Answer</button>
+        <p id="feedback" class="feedback"></p>
+        <p id="score">Score: 0</p>
+        <p id="timer">Time Left: 190s</p>
     </div>
     <script src="script.js"></script>
 </body>

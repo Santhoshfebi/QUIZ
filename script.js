@@ -1,79 +1,129 @@
-// Array of question objects
 const questions = [
     {
         question: "What is the capital of France?",
-        answers: ["Berlin", "Madrid", "Paris", "Lisbon"],
-        correct: "Paris"
-    },
-    {
-        question: "Which planet is known as the Red Planet?",
-        answers: ["Earth", "Mars", "Jupiter", "Saturn"],
-        correct: "Mars"
+        options: ["Berlin", "Madrid", "Paris", "Lisbon"],
+        answer: "Paris"
     },
     {
         question: "Who wrote 'To Kill a Mockingbird'?",
-        answers: ["Harper Lee", "Mark Twain", "Ernest Hemingway", "Jane Austen"],
-        correct: "Harper Lee"
+        options: ["Harper Lee", "George Orwell", "Mark Twain", "Jane Austen"],
+        answer: "Harper Lee"
+    },
+    {
+        question: "Which planet is known as the Red Planet?",
+        options: ["Earth", "Mars", "Jupiter", "Saturn"],
+        answer: "Mars"
     },
     {
         question: "What is the largest ocean on Earth?",
-        answers: ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "Pacific Ocean"],
-        correct: "Pacific Ocean"
+        options: ["Atlantic Ocean", "Indian Ocean", "Pacific Ocean", "Arctic Ocean"],
+        answer: "Pacific Ocean"
     },
     {
-        question: "What is the hardest natural substance on Earth?",
-        answers: ["Gold", "Iron", "Diamond", "Platinum"],
-        correct: "Diamond"
+        question: "What is the square root of 64?",
+        options: ["6", "7", "8", "9"],
+        answer: "8"
     }
 ];
 
-let currentQuestionIndex = 0;
-let score = 0;
+let currentQuestionIndex = 0;  //question count 
+let score = 0;    // score count 
+let timeLeft = 190;  // for changing the timer count
+let timerInterval;
 
-// Elements
-const questionText = document.getElementById('question-text');
-const answersContainer = document.getElementById('answers-container');
-const submitBtn = document.getElementById('submit-btn');
-const feedback = document.getElementById('feedback');
-const scoreDisplay = document.getElementById('score');
+const questionElement = document.getElementById('question');
+const optionsContainer = document.getElementById('options');
+const submitButton = document.getElementById('submit-btn');
+const feedbackElement = document.getElementById('feedback');
+const scoreElement = document.getElementById('score');
+const timerElement = document.getElementById('timer');
 
-// Load question
-function loadQuestion() {
+function startQuiz() {
+    displayQuestion();
+    startTimer();
+}
+
+function displayQuestion() {
+    // Clear previous options
+    optionsContainer.innerHTML = '';
+    feedbackElement.textContent = '';
+
+    // Display current question
     const currentQuestion = questions[currentQuestionIndex];
-    questionText.textContent = currentQuestion.question;
-    
-    answersContainer.innerHTML = '';
-    currentQuestion.answers.forEach(answer => {
+    questionElement.textContent = currentQuestion.question;
+
+    // Display options
+    currentQuestion.options.forEach(option => {
         const button = document.createElement('button');
-        button.textContent = answer;
-        button.addEventListener('click', () => selectAnswer(answer));
-        answersContainer.appendChild(button);
+        button.textContent = option;
+        button.classList.add('option-btn');
+        button.addEventListener('click', () => selectOption(option));
+        optionsContainer.appendChild(button);
     });
 }
 
-// Handle answer selection
-function selectAnswer(selectedAnswer) {
-    const correctAnswer = questions[currentQuestionIndex].correct;
-    if (selectedAnswer === correctAnswer) {
-        feedback.textContent = 'Correct!';
+let selectedOption = null;
+
+function selectOption(option) {
+    selectedOption = option;
+    const buttons = document.querySelectorAll('.option-btn');
+    buttons.forEach(btn => {
+        btn.style.backgroundColor = btn.textContent === option ? '#007bff' : '#6c757d';
+    });
+}
+
+submitButton.addEventListener('click', submitAnswer);
+
+function submitAnswer() {
+    if (!selectedOption) {
+        feedbackElement.textContent = "Please select an answer!";
+        feedbackElement.style.color = 'red';
+        return;
+    }
+
+    const correctAnswer = questions[currentQuestionIndex].answer;
+    if (selectedOption === correctAnswer) {
         score++;
+        feedbackElement.textContent = "Correct!";
+        feedbackElement.style.color = 'green';
     } else {
-        feedback.textContent = 'Incorrect!';
+        feedbackElement.textContent = `Incorrect!
+        core`;
+        feedbackElement.style.color = 'red';
     }
-    scoreDisplay.textContent = `Score: ${score}`;
+
+    scoreElement.textContent = `Score: ${score}`;
+
+    // Move to the next question after a short delay
+    setTimeout(() => {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            selectedOption = null;
+            displayQuestion();
+        } else {
+            endQuiz();
+        }
+    }, 1000);
 }
 
-// Handle submit
-function handleSubmit() {
-    currentQuestionIndex++;
-    if (currentQuestionIndex < questions.length) {
-        loadQuestion();
-    } else {
-        feedback.textContent = 'Quiz completed!';
-        submitBtn.disabled = true;
-    }
+function startTimer() {
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        timerElement.textContent = `Time Left: ${timeLeft}s`;
+        if (timeLeft === 0) {
+            endQuiz();
+        }
+    }, 1000);
 }
 
-// Initialize
-loadQuestion();
-submitBtn.addEventListener('click', handleSubmit);
+function endQuiz() {
+    clearInterval(timerInterval);
+    questionElement.textContent = "Quiz Over!";
+    optionsContainer.innerHTML = '';
+    submitButton.style.display = 'none';
+    feedbackElement.textContent = `Final Score: ${score}/${questions.length}`;
+    feedbackElement.style.color = 'blue';
+}
+
+// Start the quiz when the page loads
+window.onload = startQuiz;
