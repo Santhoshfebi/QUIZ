@@ -87,8 +87,7 @@ function submitAnswer() {
         feedbackElement.textContent = "Correct!";
         feedbackElement.style.color = 'green';
     } else {
-        feedbackElement.textContent = `Incorrect!
-        core`;
+        feedbackElement.textContent = `Incorrect!`;
         feedbackElement.style.color = 'red';
     }
 
